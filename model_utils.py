@@ -1,24 +1,9 @@
 import numpy as np
-import matplotlib.pyplot as plt
 
 
-class model_utils():
 
-    # Activation Fonction
-    @staticmethod
-    def sigmoid(Z):
-        return 1 / (1 + np.exp(-Z))
+class ModelUtils():
 
-    @staticmethod
-    def RELU(Z):
-        return max(0, Z)
-
-    @staticmethod
-    def Tanh(Z):
-        return 2 * (1 / (1 + np.exp(-Z))) - 1
-
-
-    # metrics
     @staticmethod
     def log_loss(A, y):
         epsilon = 1e-15
@@ -49,8 +34,6 @@ class model_utils():
         b = b - learning_rate * db
         print(W)
         return (W, b)
-
-
 
 
 

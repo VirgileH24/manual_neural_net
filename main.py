@@ -3,55 +3,26 @@ import matplotlib.pyplot as plt
 from sklearn.datasets import make_blobs
 from sklearn.metrics import accuracy_score
 
+from model_utils import *
+
+### put the activation function here because it doesn't work when you put it in an other file(to clean later) ##"
 
 def sigmoid(Z):
     return 1 / (1 + np.exp(-Z))
 
 def RELU(Z):
-    return max(0,Z)
+    return max(0, Z)
 
 def Tanh(Z):
-    return 2 * sigmoid(Z) - 1
+    return 2 * (1 / (1 + np.exp(-Z))) - 1
 
-
-class model_utils():
-
-    @staticmethod
-    def log_loss(A, y):
-        epsilon = 1e-15
-        return 1 / len(y) * np.sum(-y * np.log(A + epsilon) - (1 - y) * np.log(1 - A + epsilon))
-
-    @staticmethod
-    def initialisation(X):
-        W = np.random.randn(X.shape[1], 1)
-        b = np.random.randn(1)
-        return (W, b)
-
-    @staticmethod
-    def model(X, W, b, act_fct):
-        Z = X.dot(W) + b
-        A = act_fct(Z)
-        return A
-
-    @staticmethod
-    def gradients(A, X, y):
-        dW = 1 / len(y) * np.dot(X.T, A - y)
-        db = 1 / len(y) * np.sum(A - y)
-        return (dW, db)
-
-    @staticmethod
-    def update(dW, db, W, b, learning_rate):
-        W = W - learning_rate * dW
-        b = b - learning_rate * db
-        print(W)
-        return (W, b)
 
 
 class neurone():
     def __init__(self, X, y, act_fct):
         self.W = np.random.randn(X.shape[1], 1)
         self.b = np.random.randn(1)
-        self.act_fct = act_fct
+        #self.act_fct = act_fct
 
     def update(self, dW, db, learning_rate):
         self.W = self.W - learning_rate * dW
@@ -65,13 +36,13 @@ class perceptron(neurone):
         self.n_iter = n_iter
 
     def fit(self, X, y):
-        self.neuron = neurone(X, y, sigmoid)
+        self.neuron = neurone(X, y)
         loss = []
 
         for i in range(self.n_iter):
-            A = model_utils.model(X, self.neuron.W, self.neuron.b,sigmoid)
-            loss.append(model_utils.log_loss(A, y))
-            dW, db =model_utils.gradients(A, X, y)
+            A = ModelUtils.model(X, self.neuron.W, self.neuron.b, sigmoid)
+            loss.append(ModelUtils.log_loss(A, y))
+            dW, db = ModelUtils.gradients(A, X, y)
             self.neuron.update(dW, db, self.learning_rate)
 
         self.loss = loss
@@ -83,42 +54,12 @@ class perceptron(neurone):
         ax1.plot(self.loss)
 
     def predict(self, X, threshold = 0.5):
-        prediction = model_utils.model(X, self.neuron.W, self.neuron.b, sigmoid)
+        prediction = ModelUtils.model(X, self.neuron.W, self.neuron.b, sigmoid)
         return 1 * (prediction >= threshold)
 
     def predict_proba(self,X):
-        prediction = model_utils.model(X, self.neuron.W, self.neuron.b, sigmoid)
+        prediction = ModelUtils.model(X, self.neuron.W, self.neuron.b, sigmoid)
         return prediction
-
-
-################### Application 1  ############
-
-X, y  = make_blobs(n_samples=100,
-                   centers=2,
-                   n_features=2,
-                   random_state=0)
-y = y.reshape((y.shape[0], 1))
-
-W, b = model_utils.initialisation(X)
-print(model_utils.model(X,W,b,sigmoid))
-
-perc = perceptron(
-                learning_rate = 0.1,
-                n_iter = 100
-                )
-
-perc.fit(X, y)
-
-new_plant = np.array([2,1])
-plt.scatter(X[:,0], X[:,1], c = y,cmap = 'summer')
-plt.scatter(new_plant[0], new_plant[1], c = 'r')
-#plt.show()
-
-y_pred = perc.predict(new_plant)
-print(y_pred)
-
-perc.plot_loss()
-
 
 
 ################# application image ############
