@@ -17,9 +17,9 @@ class ModelUtils():
         return (W, b)
 
     @staticmethod
-    def model(X, W, b, act_fct):
+    def model(X, W, b):
         Z = X.dot(W) + b
-        A = act_fct(Z)
+        A = 1 / (1 + np.exp(-Z))
         return A
 
     @staticmethod
