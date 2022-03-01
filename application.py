@@ -3,8 +3,9 @@ import matplotlib.pyplot as plt
 from sklearn.datasets import make_blobs
 from sklearn.metrics import accuracy_score
 
-from main import *
+from main import perceptron
 from model_utils import *
+
 
 
 
@@ -22,17 +23,18 @@ y = y.reshape((y.shape[0], 1))
 
 perc = perceptron(
                 learning_rate = 0.1,
-                n_iter = 100
+                n_iter = 100,
+                n_neurone_1= 8
                 )
 
-perc.fit(X, y)
+perc.fit(X.T, y.T)
 
-new_plant = np.array([2,1])
+new_plant = np.array([2,1]).T
 plt.scatter(X[:,0], X[:,1], c = y,cmap = 'summer')
 plt.scatter(new_plant[0], new_plant[1], c = 'r')
 plt.show()
 
-y_pred = perc.predict(new_plant)
+#y_pred = perc.predict(new_plant)
 #print(y_pred)
 
 perc.plot_loss()
